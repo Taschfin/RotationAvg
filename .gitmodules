@@ -1,3 +1,6 @@
 [submodule "libs/Open3D"]
 	path = libs/Open3D
 	url = https://github.com/isl-org/Open3D.git
+[submodule "libs/eigen"]
+	path = libs/eigen
+	url = https://gitlab.com/libeigen/eigen.git
