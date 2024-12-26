@@ -1,23 +1,29 @@
-#include "libs/eigen-3.4.0/Eigen/Dense"
+#include <Eigen/Dense>
 
 #include <iostream>
+#include <open3d/Open3D.h>
 
 int main() {
-    Eigen::MatrixXd mat(5,5);
-    mat << 1, 2, 3, 4, 5,
-		   6, 7, 8, 9, 10,
-		   11, 12, 13, 14, 15,
-		   16, 17, 18, 19, 20,
-		   21, 22, 23, 24, 25;
+    using namespace open3d;
+    
+    // Datei des Stanford Bunnys (Pfad anpassen!)
+    std::string file_path = "bunny.obj";
 
-    Eigen::MatrixXd result = mat.inverse();  // Transponierte Matrix
-	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(mat);
+    // Mesh-Objekt erstellen
+    std::shared_ptr<geometry::TriangleMesh> mesh = io::CreateMeshFromFile(file_path);
 
-	std::cout << "NEW2\n" << std::endl;
-	std::cout << "Eigenwerte:\n" << solver.eigenvalues() << std::endl;
-    std::cout << "Eigenvektoren:\n" << solver.eigenvectors() << std::endl;
-    std::cout << "Matrix:\n" << mat << "\n";
-    std::cout << "Transponierte Matrix:\n" << result << "\n";
+    if (mesh == nullptr || mesh->vertices_.empty()) {
+        std::cerr << "Fehler: Mesh konnte nicht geladen werden!" << std::endl;
+        return -1;
+    }
+
+    // Informationen über das Mesh ausgeben
+    std::cout << "Mesh geladen: " << file_path << std::endl;
+    std::cout << "Anzahl der Dreiecke: " << mesh->triangles_.size() << std::endl;
+    std::cout << "Anzahl der Vertices: " << mesh->vertices_.size() << std::endl;
+
+    // Mesh visualisieren
+    visualization::DrawGeometries({mesh}, "Stanford Bunny", 800, 600);
 
     return 0;
 }
