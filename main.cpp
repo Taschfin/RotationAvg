@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
-
-#include <iostream>
 #include <open3d/Open3D.h>
+#include <iostream>
+
 
 int main() {
     using namespace open3d;
