@@ -1,10 +1,6 @@
 [submodule "libs/eigen"]
 	path = libs/eigen
 	url = https://gitlab.com/libeigen/eigen.git
-[submodule "libs/assimp"]
-	path = libs/assimp
-	url = https://github.com/assimp/assimp.git
-
 [submodule "libs/vtk"]
 	path = libs/vtk
 	url = https://gitlab.kitware.com/vtk/vtk.git
