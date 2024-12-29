@@ -4,9 +4,7 @@
 [submodule "libs/assimp"]
 	path = libs/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "libs/glfw"]
-	path = libs/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "libs/glew"]
-	path = libs/glew
-	url = https://github.com/nigels-com/glew.git
+
+[submodule "libs/vtk"]
+	path = libs/vtk
+	url = https://gitlab.kitware.com/vtk/vtk.git
