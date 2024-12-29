@@ -1,29 +1,33 @@
-#include <Eigen/Dense>
-#include <open3d/Open3D.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include <iostream>
+#include <string>
 
-
-int main() {
-    using namespace open3d;
-    
-    // Datei des Stanford Bunnys (Pfad anpassen!)
-    std::string file_path = "bunny.obj";
-
-    // Mesh-Objekt erstellen
-    std::shared_ptr<geometry::TriangleMesh> mesh = io::CreateMeshFromFile(file_path);
-
-    if (mesh == nullptr || mesh->vertices_.empty()) {
-        std::cerr << "Fehler: Mesh konnte nicht geladen werden!" << std::endl;
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        std::cerr << "Fehler: Kein Dateipfad angegeben!" << std::endl;
         return -1;
     }
 
-    // Informationen über das Mesh ausgeben
-    std::cout << "Mesh geladen: " << file_path << std::endl;
-    std::cout << "Anzahl der Dreiecke: " << mesh->triangles_.size() << std::endl;
-    std::cout << "Anzahl der Vertices: " << mesh->vertices_.size() << std::endl;
+    std::string file_path = argv[1];
 
-    // Mesh visualisieren
-    visualization::DrawGeometries({mesh}, "Stanford Bunny", 800, 600);
+    // Assimp Importer
+    Assimp::Importer importer;
+
+    // Lade das Modell
+    const aiScene* scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipWindingOrder);
+
+    // Überprüfe, ob das Modell erfolgreich geladen wurde
+    if (!scene) {
+        std::cerr << "Fehler beim Laden der Datei: " << importer.GetErrorString() << std::endl;
+        return -1;
+    }
+
+    std::cout << "Mesh geladen: " << file_path << std::endl;
+    std::cout << "Anzahl der Meshes: " << scene->mNumMeshes << std::endl;
+
+    // Weitere Verarbeitung der Mesh-Daten, z. B. Visualisierung
 
     return 0;
 }
