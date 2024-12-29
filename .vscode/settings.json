@@ -79,6 +79,20 @@
     "regex": "cpp",
     "shared_mutex": "cpp",
     "dense": "cpp",
-    "core": "cpp"
+    "core": "cpp",
+    "csetjmp": "cpp",
+    "barrier": "cpp",
+    "charconv": "cpp",
+    "coroutine": "cpp",
+    "cuchar": "cpp",
+    "netfwd": "cpp",
+    "source_location": "cpp",
+    "rope": "cpp",
+    "slist": "cpp",
+    "latch": "cpp",
+    "ranges": "cpp",
+    "scoped_allocator": "cpp",
+    "span": "cpp",
+    "syncstream": "cpp"
   }
 }
