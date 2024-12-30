@@ -1,6 +1,9 @@
 [submodule "libs/eigen"]
 	path = libs/eigen
 	url = https://gitlab.com/libeigen/eigen.git
-[submodule "libs/vtk"]
-	path = libs/vtk
-	url = https://gitlab.kitware.com/vtk/vtk.git
+[submodule "libs/polyscope"]
+	path = libs/polyscope
+	url = https://github.com/polyscope/polyscope.git
+[submodule "libs/tinyobjloader"]
+	path = libs/tinyobjloader
+	url = https://github.com/tinyobjloader/tinyobjloader.git
