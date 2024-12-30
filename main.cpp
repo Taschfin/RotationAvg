@@ -35,6 +35,14 @@ int main(int argc, char* argv[]) {
     // Versuche das Modell als Dreiecksmesh zu laden
     auto mesh = io::CreateMeshFromFile(file_path);
 
+        auto point_cloud = std::make_shared<geometry::PointCloud>();
+
+        // Füge einen Punkt hinzu (z. B. an Position (0, 0, 0))
+        point_cloud->points_.emplace_back(0.0, 0.0, 0.0);
+
+        // Füge eine Farbe für den Punkt hinzu (Rot: RGB = 1.0, 0.0, 0.0)
+        point_cloud->colors_.emplace_back(1.0, 0.0, 0.0);
+
     if (mesh != nullptr && !mesh->vertices_.empty() && !mesh->triangles_.empty()) {
         std::cout << "Mesh geladen: " << file_path << std::endl;
         std::cout << "Anzahl der Dreiecke: " << mesh->triangles_.size() << std::endl;
@@ -53,7 +61,7 @@ int main(int argc, char* argv[]) {
 
         // Grid hinzufügen
         auto grid = CreateGrid(0.1, 10);
-        visualization::DrawGeometries({mesh, grid}, "Mesh mit Textur und Gitter", 800, 600);
+        visualization::DrawGeometries({mesh, grid, point_cloud}, "Mesh mit Textur und Gitter", 800, 600);
     } else {
         // Versuche das Modell als Punktwolke zu laden
         auto cloud = io::CreatePointCloudFromFile(file_path);
