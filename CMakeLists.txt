@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(RotationAvg)
 
+include_directories(libs/polyscope/include)
+include_directories(libs/tinyobjloader)
 
 add_subdirectory(libs/eigen)
 add_subdirectory(libs/polyscope)

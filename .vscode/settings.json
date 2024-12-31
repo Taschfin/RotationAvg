@@ -79,6 +79,8 @@
     "regex": "cpp",
     "shared_mutex": "cpp",
     "dense": "cpp",
-    "core": "cpp"
+    "core": "cpp",
+    "bvh": "cpp",
+    "*.ipp": "cpp"
   }
 }

@@ -1,33 +1,74 @@
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include <polyscope/polyscope.h>
+#include <polyscope/surface_mesh.h>
+#include <tiny_obj_loader.h>
+#include <Eigen/Dense>
 #include <iostream>
 #include <string>
 
+void loadAndDisplayMesh(const std::string& filepath) {
+    // Laden des OBJ-Modells
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string warn, err;
+
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str())) {
+        std::cerr << "Fehler beim Laden des Meshes: " << warn << err << std::endl;
+        return;
+    }
+
+    std::cout << "Mesh geladen: " << filepath << std::endl;
+
+    // Daten für Polyscope vorbereiten
+    Eigen::MatrixXd vertices(attrib.vertices.size() / 3, 3); // Vertex-Matrix
+    Eigen::MatrixXi faces; // Face-Matrix
+
+    // Vertices einlesen
+    for (size_t i = 0; i < attrib.vertices.size(); i += 3) {
+        vertices.row(i / 3) << attrib.vertices[i], attrib.vertices[i + 1], attrib.vertices[i + 2];
+    }
+
+    // Anzahl der Dreiecke berechnen
+    size_t num_faces = 0;
+    for (const auto& shape : shapes) {
+        num_faces += shape.mesh.indices.size() / 3;
+    }
+
+    //std::cout << "Shapes: " << shapes.size() << " num_faces " << num_faces << " indices " << shapes[0].mesh.indices.size() << std::endl;
+
+    // Faces einlesen
+    faces.resize(num_faces, 3);
+    
+    size_t face_index = 0;
+    for (const auto& shape : shapes) {
+        for (size_t i = 0; i < shape.mesh.indices.size(); i += 3) {
+            faces(face_index, 0) = shape.mesh.indices[i + 0].vertex_index;
+            faces(face_index, 1) = shape.mesh.indices[i + 1].vertex_index;
+            faces(face_index, 2) = shape.mesh.indices[i + 2].vertex_index;
+            face_index++;
+        }
+    }
+
+    // Mesh zu Polyscope hinzufügen
+    polyscope::registerSurfaceMesh("Mesh", vertices, faces);
+}
+
 int main(int argc, char** argv) {
     if (argc < 2) {
-        std::cerr << "Fehler: Kein Dateipfad angegeben!" << std::endl;
+        std::cerr << "Verwendung: " << argv[0] << " <Pfad zur OBJ-Datei>" << std::endl;
         return -1;
     }
 
-    std::string file_path = argv[1];
+    std::string filepath = argv[1];
 
-    // Assimp Importer
-    Assimp::Importer importer;
+    // Polyscope initialisieren
+    polyscope::init();
 
-    // Lade das Modell
-    const aiScene* scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipWindingOrder);
+    // Mesh laden und anzeigen
+    loadAndDisplayMesh(filepath);
 
-    // Überprüfe, ob das Modell erfolgreich geladen wurde
-    if (!scene) {
-        std::cerr << "Fehler beim Laden der Datei: " << importer.GetErrorString() << std::endl;
-        return -1;
-    }
-
-    std::cout << "Mesh geladen: " << file_path << std::endl;
-    std::cout << "Anzahl der Meshes: " << scene->mNumMeshes << std::endl;
-
-    // Weitere Verarbeitung der Mesh-Daten, z. B. Visualisierung
+    // Hauptschleife von Polyscope starten
+    polyscope::show();
 
     return 0;
 }
