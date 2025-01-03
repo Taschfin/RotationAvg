@@ -5,6 +5,9 @@
 #include <iostream>
 #include <string>
 
+#include <helpers/math_operations.h>
+
+
 void loadAndDisplayMesh(const std::string& filepath) {
     // Laden des OBJ-Modells
     tinyobj::attrib_t attrib;
@@ -69,6 +72,8 @@ int main(int argc, char** argv) {
 
     // Hauptschleife von Polyscope starten
     polyscope::show();
+
+    vectorToMatrix(std::vector<float>{1, 2, 3, 4, 5, 6}, 2, 3);
 
     return 0;
 }
