@@ -14,3 +14,8 @@ Eigen::MatrixXd RotateViaYAxis(const Eigen::MatrixXd& matrix, double angle_radia
 
 Eigen::MatrixXd RotateViaZAxis(const Eigen::MatrixXd& matrix, double angle_radians);
 
+Eigen::MatrixXd RotateViaXY(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_y);
+
+Eigen::MatrixXd RotateViaXZ(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_z);
+
+Eigen::MatrixXd RotateViaYZ(const Eigen::MatrixXd& matrix, double angle_radians_y, double angle_radians_z);

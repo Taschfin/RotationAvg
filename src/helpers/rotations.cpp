@@ -36,3 +36,17 @@ Eigen::MatrixXd RotateViaYAxis(const Eigen::MatrixXd& matrix, double angle_radia
 Eigen::MatrixXd RotateViaZAxis(const Eigen::MatrixXd& matrix, double angle_radians) {
 	return matrix * RotationMatrixAxisZ(angle_radians).transpose();
 };
+
+Eigen::MatrixXd RotateViaXY(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_y) {
+	return matrix * RotationMatrixAxisX(angle_radians_x).transpose() * RotationMatrixAxisY(angle_radians_y).transpose();
+};
+
+Eigen::MatrixXd RotateViaXZ(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_z) {
+	return matrix * RotationMatrixAxisY(angle_radians_x).transpose() * RotationMatrixAxisZ(angle_radians_z).transpose();
+};
+
+Eigen::MatrixXd RotateViaYZ(const Eigen::MatrixXd& matrix, double angle_radians_y, double angle_radians_z) {
+	return matrix * RotationMatrixAxisZ(angle_radians_z).transpose() * RotationMatrixAxisY(angle_radians_y).transpose();
+};
+
+
