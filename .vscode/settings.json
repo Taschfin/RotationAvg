@@ -81,6 +81,7 @@
     "dense": "cpp",
     "core": "cpp",
     "bvh": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "*.inc": "cpp"
   }
 }
