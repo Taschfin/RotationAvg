@@ -2,20 +2,22 @@
 
 #include <Eigen/Dense>
 
-Eigen::Matrix3d RotationMatrixAxisX(double angle_radians);
+double degreesToRadians(double degrees);
 
-Eigen::Matrix3d RotationMatrixAxisY(double angle_radians);
+Eigen::Matrix3d rotationMatrixAxisX(double angle_radians);
 
-Eigen::Matrix3d RotationMatrixAxisZ(double angle_radians);
+Eigen::Matrix3d rotationMatrixAxisY(double angle_radians);
 
-Eigen::MatrixXd RotateViaXAxis(const Eigen::MatrixXd& matrix, double angle_radians);
+Eigen::Matrix3d rotationMatrixAxisZ(double angle_radians);
 
-Eigen::MatrixXd RotateViaYAxis(const Eigen::MatrixXd& matrix, double angle_radians);
+Eigen::MatrixXd rotateViaXAxis(const Eigen::MatrixXd& matrix, double angle_radians);
 
-Eigen::MatrixXd RotateViaZAxis(const Eigen::MatrixXd& matrix, double angle_radians);
+Eigen::MatrixXd rotateViaYAxis(const Eigen::MatrixXd& matrix, double angle_radians);
 
-Eigen::MatrixXd RotateViaXY(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_y);
+Eigen::MatrixXd rotateViaZAxis(const Eigen::MatrixXd& matrix, double angle_radians);
 
-Eigen::MatrixXd RotateViaXZ(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_z);
+Eigen::MatrixXd rotateViaXY(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_y);
 
-Eigen::MatrixXd RotateViaYZ(const Eigen::MatrixXd& matrix, double angle_radians_y, double angle_radians_z);
+Eigen::MatrixXd rotateViaXZ(const Eigen::MatrixXd& matrix, double angle_radians_x, double angle_radians_z);
+
+Eigen::MatrixXd rotateViaYZ(const Eigen::MatrixXd& matrix, double angle_radians_y, double angle_radians_z);

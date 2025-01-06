@@ -18,25 +18,25 @@ bool loadAndDisplayMesh(const std::string& filepath, int& mesh_count) {
 
         std::cout << "Loading Mesh " << mesh_count << ": " << filepath << std::endl;
 
-		Eigen::MatrixXd vertices = vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3);
+		Eigen::MatrixXd vertices;
 
-		/*if (mesh_count == 1) {
-        	vertices = RotateViaXAxis(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI/2);
+		if (mesh_count == 1) {
+        	vertices = rotateViaXAxis(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI/2);
 		}
 		else if (mesh_count == 2)
 		{
-			vertices = RotateViaYAxis(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI);
+			vertices = rotateViaYAxis(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI);
 		}
 		else if (mesh_count == 3)
 		{
-			vertices = RotateViaZAxis(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI/2);
+			vertices = rotateViaZAxis(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI/2);
 		}
 		else if (mesh_count == 4){
-			vertices = RotateViaXZ(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI/2, M_PI/2);
+			vertices = rotateViaXZ(vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3), M_PI/2, M_PI/2);
 		}
 		else {
 			vertices =vectorToMatrix(attrib.vertices, attrib.vertices.size()/3, 3);
-		}*/
+		}
 
         Eigen::MatrixXi faces;
 
