@@ -3,7 +3,7 @@
 #include <format>
 
 #include <visualization/loading.h>
-#include <helpers/convexCombination.h>
+#include <math/convexCombination.h>
 
 void showMeshes(const std::vector<std::string> &filepaths);
 

@@ -1,4 +1,4 @@
-#include <helpers/convexCombination.h>
+#include <math/convexCombination.h>
 #include <iostream>
 
 Eigen::Matrix3d convexCombination(const Eigen::Matrix3d &matrix1, const Eigen::Matrix3d &matrix2, double alpha)

@@ -7,7 +7,7 @@
 
 #include <globals.h>
 #include <helpers/transformations.h>
-#include <helpers/rotations.h>
+#include <math/rotations.h>
 
 struct MeshData
 {

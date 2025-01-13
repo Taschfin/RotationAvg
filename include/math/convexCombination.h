@@ -1,6 +1,6 @@
 #pragma once
 
-#include <helpers/rotations.h>
+#include <math/rotations.h>
 
 Eigen::Matrix3d convexCombination(const Eigen::Matrix3d &matrix1, const Eigen::Matrix3d &matrix2, double alpha);
 
