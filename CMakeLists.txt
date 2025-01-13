@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 project(RotationAvg)
 
+set(CMAKE_CXX_STANDARD 23)
+
 set(SOURCES src/main.cpp)
 
-# Executable definieren
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Externe Unterverzeichnisse hinzufügen

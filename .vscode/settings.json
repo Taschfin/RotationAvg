@@ -97,6 +97,9 @@
     "numericaldiff": "cpp",
     "openglsupport": "cpp",
     "specialfunctions": "cpp",
-    "splines": "cpp"
+    "splines": "cpp",
+    "charconv": "cpp",
+    "span": "cpp",
+    "format": "cpp"
   }
 }
