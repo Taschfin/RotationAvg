@@ -1,5 +1,5 @@
 {
-  "cmake.sourceDirectory": "/home/taschfin/Programmieren/eigen_test/third-party/eigen-3.4.0/bench/btl",
+  "cmake.sourceDirectory": "/home/taschfin/Programmieren/BachelorArbeit",
   "files.associations": {
     "cctype": "cpp",
     "clocale": "cpp",
@@ -100,6 +100,7 @@
     "splines": "cpp",
     "charconv": "cpp",
     "span": "cpp",
-    "format": "cpp"
+    "format": "cpp",
+    "matrixfunctions": "cpp"
   }
 }
