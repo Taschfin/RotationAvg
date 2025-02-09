@@ -20,6 +20,11 @@ public:
 		const std::function<double(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &distanceFunction,
 		const std::function<Eigen::MatrixXd(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &gradientFunction);
 
+	Eigen::MatrixXd optimizeOnFlag(
+		const Eigen::MatrixXd &initialGuess,
+		const std::function<double(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &distanceFunction,
+		const std::function<Eigen::MatrixXd(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &gradientFunction);
+
 	double calculateDistanceSum(const std::function<double(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &distanceFunction,
 								const Eigen::MatrixXd &targetRotation);
 

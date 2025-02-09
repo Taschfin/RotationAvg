@@ -5,6 +5,8 @@
 #include <visualization/loading.h>
 #include <math/convexCombination.h>
 #include <math/rotationOptimizer.h>
+#include <math/distancesFlags.h>
+#include <visualization/helpers.h>
 
 #include <polyscope/polyscope.h>
 #include <polyscope/point_cloud.h>
@@ -20,16 +22,8 @@ void rotationSlider(std::string mesh_name);
 
 void convexCombination(std::string mesh_name);
 
-void optimalRotation(std::string mesh_name);
+void optimalRotationOnManifold(std::string mesh_name);
+
+void optimalRotationOnFlag();
 
 void displayFlags();
-
-void generateRandomRotationsAndDisplay(int numOfRotations);
-
-void addRandomRotations(int numOfRotations);
-
-void resetMesh(std::string mesh_name);
-
-void displayLineFromMatrix(const Eigen::Matrix3d &matrix);
-
-void displayPlaneFromMatrix(const Eigen::Matrix3d &matrix);

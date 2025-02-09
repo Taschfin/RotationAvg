@@ -51,7 +51,6 @@ Eigen::MatrixXd RotationOptimizer::optimizeOnManifold(
 {
 	Eigen::MatrixXd currentRotation = initialGuess;
 	int iteration = 0;
-
 	double learningRateCopy = learningRate;
 	double oldSumOfQuadraticDistances = calculateDistanceSum(distanceFunction, currentRotation);
 
@@ -66,10 +65,6 @@ Eigen::MatrixXd RotationOptimizer::optimizeOnManifold(
 		currentRotation = nextRotation;
 
 		double newSumOfQuadraticDistances = calculateDistanceSum(distanceFunction, nextRotation);
-
-		std::cout << "Iteration: " << iteration << " Sum of Quadratic Distances: " << newSumOfQuadraticDistances << std::endl;
-		std::cout << "Current Rotation: \n"
-				  << currentRotation << std::endl;
 
 		if (std::abs(newSumOfQuadraticDistances - oldSumOfQuadraticDistances) < threshhold)
 		{
@@ -96,4 +91,52 @@ Eigen::MatrixXd RotationOptimizer::optimizeOnManifold(
 	}
 
 	return currentRotation;
+}
+
+Eigen::MatrixXd RotationOptimizer::optimizeOnFlag(
+	const Eigen::MatrixXd &initialGuess,
+	const std::function<double(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &distanceFunction,
+	const std::function<Eigen::MatrixXd(const Eigen::MatrixXd &, const Eigen::MatrixXd &)> &gradientFunction)
+{
+
+	Eigen::MatrixXd currentFlag = initialGuess;
+	int iteration = 0;
+	double learningRateCopy = learningRate;
+	double oldSumOfQuadraticDistances = calculateDistanceSum(distanceFunction, currentFlag);
+
+	while (iteration < maxIterations)
+	{
+
+		Eigen::MatrixXd gradient = calculateRotationGradientAvg(gradientFunction, currentFlag);
+		Eigen::MatrixXd nextFlag = currentFlag - learningRateCopy * gradient;
+		nextFlag = projectToSO(nextFlag);
+		currentFlag = nextFlag;
+
+		double newSumOfQuadraticDistances = calculateDistanceSum(distanceFunction, nextFlag);
+
+		if (std::abs(newSumOfQuadraticDistances - oldSumOfQuadraticDistances) < threshhold)
+		{
+			std::cout << "Gradient Descent stoping at Iteration: " << iteration << std::endl;
+			break;
+		}
+
+		if (newSumOfQuadraticDistances < oldSumOfQuadraticDistances)
+		{
+			learningRateCopy *= 1.1;
+		}
+		else
+		{
+			learningRateCopy *= 0.5;
+		}
+
+		oldSumOfQuadraticDistances = newSumOfQuadraticDistances;
+		++iteration;
+	}
+
+	if (iteration == maxIterations)
+	{
+		std::cout << "Reached maximum iterations without convergence.\n";
+	}
+
+	return currentFlag;
 }

@@ -3,13 +3,15 @@
 // GLOBAL VARIABLES
 // Gradient Descent
 
-std::vector<Eigen::Vector3d> rotationsPoints;
 std::vector<Eigen::MatrixXd> rotations;
+
 float rotationXOptimization = 0.0;
 float rotationYOptimization = 0.0;
 float rotationZOptimization = 0.0;
 
 // Flags
+std::vector<polyscope::CurveNetwork *> FlagLines;
+std::vector<polyscope::SurfaceMesh *> FlagPlanes;
 
 float rotationXFlag = 0.0;
 float rotationYFlag = 0.0;
@@ -70,7 +72,7 @@ void meshTab(const std::vector<std::string> &mesh_names)
 					convexCombination(mesh_name);
 					break;
 				case 2:
-					optimalRotation(mesh_name);
+					optimalRotationOnManifold(mesh_name);
 					break;
 				default:
 					break;
@@ -155,7 +157,7 @@ void convexCombination(std::string mesh_name)
 	ImGui::EndDisabled();
 }
 
-void optimalRotation(std::string mesh_name)
+void optimalRotationOnManifold(std::string mesh_name)
 {
 	MeshData &meshData = Meshes[mesh_name];
 	polyscope::SurfaceMesh *mesh = polyscope::getSurfaceMesh(mesh_name);
@@ -170,18 +172,23 @@ void optimalRotation(std::string mesh_name)
 	{
 		rotations.clear();
 	}
+
 	ImGui::SameLine();
 	if (ImGui::Button("Add Rotation"))
 	{
-		rotations.push_back(rotationMatrix(
+		Eigen::Matrix3d rotation = rotationMatrix(
 			degreesToRadians(rotationXOptimization),
 			degreesToRadians(rotationYOptimization),
-			degreesToRadians(rotationZOptimization)));
+			degreesToRadians(rotationZOptimization));
+
+		rotations.push_back(rotation);
+		FlagLines.push_back(displayLineFromMatrix(rotation, rotations.size()));
+		FlagPlanes.push_back(displayPlaneFromMatrix(rotation, rotations.size()));
 	}
 
 	if (ImGui::Button("Generate Random Rotations"))
 	{
-		addRandomRotations(1);
+		addRandomRotations(rotations, 1);
 	}
 
 	if (ImGui::Button("Optimize"))
@@ -196,6 +203,17 @@ void optimalRotation(std::string mesh_name)
 		Eigen::MatrixXd rotated = meshData.vertices * optimalRotation;
 		mesh->updateVertexPositions(rotated);
 	}
+
+	if (ImGui::Button("Optimize Flag"))
+	{
+
+		RotationOptimizer optimizer(rotations, 1, 1000, 1e-6);
+		Eigen::MatrixXd initialGuess = Eigen::MatrixXd::Identity(3, 3);
+		Eigen::MatrixXd optimalRotation = optimizer.optimizeOnFlag(
+			initialGuess,
+			squaredChordalDistanceFlag,
+			squaredChordalDistanceGradientFlag);
+	}
 }
 
 void displayFlags()
@@ -209,89 +227,49 @@ void displayFlags()
 		degreesToRadians(rotationYFlag),
 		degreesToRadians(rotationZFlag));
 
-	displayLineFromMatrix(rotation);
-	displayPlaneFromMatrix(rotation);
-}
-
-void generateRandomRotationsAndDisplay(int numOfRotations)
-{
-	rotations.clear();
-	rotationsPoints.clear();
-
-	// std::cout << "Generating " << numOfRotations << " random rotations" << std::endl;
-
-	for (int i = 0; i < numOfRotations; ++i)
+	for (int i = 0; i < FlagLines.size(); ++i)
 	{
-		Eigen::Matrix3d rotation = generateRandomRotation();
+		FlagLines[i]->setEnabled(true);
+		FlagPlanes[i]->setEnabled(true);
+	}
+
+	if (ImGui::Button("Reset Rotations"))
+	{
+		removeDisplayedFlags(rotations, FlagLines, FlagPlanes);
+		removeDisplayedFlag("optimal line", "optimal plane");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Add Rotation"))
+	{
 		rotations.push_back(rotation);
-		Eigen::Vector3d rotationPoint = RotationAsPoint(rotation);
-		rotationsPoints.push_back(rotationPoint);
+		FlagLines.push_back(displayLineFromMatrix(rotation, rotations.size()));
+		FlagPlanes.push_back(displayPlaneFromMatrix(rotation, rotations.size()));
 	}
 
-	auto pointCloud = polyscope::registerPointCloud("Rotations Points", rotationsPoints);
-
-	pointCloud->setPointRadius(0.01);
-	pointCloud->setPointColor({1.0, 0.0, 0.0});
-}
-
-void addRandomRotations(int numOfRotations)
-{
-	for (int i = 0; i < numOfRotations; ++i)
+	if (ImGui::Button("Generate Random Rotations"))
 	{
-		Eigen::Matrix3d rotation = generateRandomRotation();
-		rotations.push_back(rotation);
+		addRandomRotations(rotations, 1);
 	}
-}
 
-void resetMesh(std::string mesh_name)
-{
-	MeshData &meshData = Meshes[mesh_name];
-	polyscope::SurfaceMesh *mesh = polyscope::getSurfaceMesh(mesh_name);
-
-	resetMeshProperties(mesh_name);
-
-	mesh->updateVertexPositions(meshData.vertices);
-}
-
-void displayLineFromMatrix(const Eigen::Matrix3d &matrix)
-{
-	Eigen::Vector3d direction = matrix.col(0).normalized();
-
-	double tMax = 2.0;
-	Eigen::Vector3d point1 = -tMax * direction;
-	Eigen::Vector3d point2 = tMax * direction;
-
-	std::vector<std::array<double, 3>> points = {
-		{point1.x(), point1.y(), point1.z()},
-		{point2.x(), point2.y(), point2.z()}};
-	std::vector<std::array<size_t, 2>> edges = {
-		{0, 1}};
-
-	auto *line = polyscope::registerCurveNetwork("Line Rotation Flag", points, edges);
-	line->setRadius(0.01);
-}
-
-void displayPlaneFromMatrix(const Eigen::Matrix3d &matrix)
-{
-
-	Eigen::Vector3d u = matrix.col(0);
-	Eigen::Vector3d v = matrix.col(1);
-
-	std::vector<Eigen::Vector3d> vertices = {
-		u + v,
-		u - v,
-		-u - v,
-		-u + v};
-
-	std::vector<std::array<size_t, 3>> faces = {
-		{0, 1, 2},
-		{0, 2, 3}};
-
-	std::vector<std::array<double, 3>> psVertices;
-	for (const auto &vertex : vertices)
+	if (ImGui::Button("Optimize"))
 	{
-		psVertices.push_back({vertex.x(), vertex.y(), vertex.z()});
+		removeDisplayedFlag("optimal line", "optimal plane");
+
+		RotationOptimizer optimizer(rotations, 1, 1000, 1e-6);
+		Eigen::MatrixXd initialGuess = Eigen::MatrixXd::Identity(3, 3);
+		Eigen::MatrixXd optimalRotation = optimizer.optimizeOnFlag(
+			initialGuess,
+			squaredChordalDistanceFlag,
+			squaredChordalDistanceGradientFlag);
+
+		auto [points, edges] = getLinePointsAndEdges(optimalRotation);
+		auto [psVertices, faces] = getPlanePointsAndFaces(optimalRotation);
+
+		auto *line = polyscope::registerCurveNetwork("optimal line", points, edges);
+		line->setRadius(0.01);
+		auto *plane = polyscope::registerSurfaceMesh("optimal plane", psVertices, faces);
 	}
 
-	polyscope::registerSurfaceMesh("Plane Rotation Flag", psVertices, faces);
+	auto *new_line = displayLineFromMatrix(rotation, 0, true);
+	auto *new_plane = displayPlaneFromMatrix(rotation, 0, true);
 }

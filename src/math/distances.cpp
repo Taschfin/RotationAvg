@@ -1,11 +1,11 @@
 #include <math/distances.h>
 
+// Chordal Distance
+
 double squaredChordalDistance(const Eigen::MatrixXd &R1, const Eigen::MatrixXd &R2)
 {
 	Eigen::Matrix3d diff = R1 - R2;
-	double frobeniusNorm = diff.norm();
-
-	return pow(frobeniusNorm, 2);
+	return diff.squaredNorm();
 }
 
 Eigen::MatrixXd squaredChordalDistanceGradient(const Eigen::MatrixXd &R1, const Eigen::MatrixXd &R2)
@@ -13,24 +13,33 @@ Eigen::MatrixXd squaredChordalDistanceGradient(const Eigen::MatrixXd &R1, const 
 	return 2 * (R1 - R2);
 }
 
-double geodesicDistance(const Eigen::Matrix3d &R1, const Eigen::Matrix3d &R2)
-{
-	double cosTheta = ((R1.transpose() * R2).trace() - 1) / 2;
-	cosTheta = std::max(-1.0, std::min(1.0, cosTheta));
+// Deviation from the Identity Matrix
 
-	return std::acos(cosTheta);
+double squaredDeviationFromIdentity(const Eigen::MatrixXd &R1, const Eigen::MatrixXd &R2)
+{
+	int N = R1.rows();
+	return 2 * (N - (R1 * R2.transpose()).trace());
+	;
 }
 
-double spectralDistance(const Eigen::Matrix3d &R1, const Eigen::Matrix3d &R2)
+Eigen::MatrixXd squaredDeviationFromIdentityGradient(const Eigen::MatrixXd &R1, const Eigen::MatrixXd &R2)
 {
-	Eigen::Matrix3d diff = R1.transpose() * R2 - Eigen::MatrixXd::Identity(3, 3);
-
-	Eigen::JacobiSVD<Eigen::MatrixXd> svd(diff, Eigen::ComputeThinU | Eigen::ComputeThinV);
-	return svd.singularValues()(0);
+	return -2 * R2;
 }
 
-/*double projectionDistance(const Eigen::Matrix3d &R1, const Eigen::Matrix3d &R2)
+// Geodesic Distance
+
+double squaredGeodesicDistance(const Eigen::MatrixXd &R1, const Eigen::MatrixXd &R2)
 {
-	Eigen::Matrix3d diff = R1.transpose() * R2 - Eigen::MatrixXd::Identity(3, 3);
-	double dist =
-}*/
+	Eigen::MatrixXd X = R1 * R2.transpose();
+
+	Eigen::JacobiSVD<Eigen::MatrixXd> svd(X, Eigen::ComputeFullU | Eigen::ComputeFullV);
+	Eigen::MatrixXd S = svd.singularValues().asDiagonal();
+	Eigen::MatrixXd logX = svd.matrixU() * S.array().log().matrix().asDiagonal() * svd.matrixV().transpose();
+
+	return logX.squaredNorm();
+}
+
+Eigen::MatrixXd csquaredGeodesicDistanceGradient(const Eigen::MatrixXd &R1, const Eigen::MatrixXd &R2)
+{
+}
